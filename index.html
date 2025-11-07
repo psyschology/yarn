@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Proposal for the.yarn.sisters_</title>
+    
+    <!-- 1. Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- 3. All Custom CSS (Proposal + Simulation) -->
+    <style>
+        /* --- Brand Color & Font Definitions --- */
+        :root {
+            --font-display: 'Poppins', sans-serif;
+            --font-inter: 'Inter', sans-serif;
+            
+            /* Color Palette */
+            --color-bg-beige: #F5F5DC; /* Beige */
+            --color-text-brown: #8B4513; /* Warm Brown */
+            --color-border-tan: #D2B48C; /* Tan */
+            --color-bg-soft-green: #D1FAE5; /* emerald-100 */
+            --color-bg-soft-yellow: #FEF3C7; /* amber-100 */
+            --color-sim-bg: #FFFAF0; /* FloralWhite */
+        }
+
+        /* --- Base Proposal Styles --- */
+        body {
+            font-family: var(--font-inter);
+            background-color: var(--color-bg-beige);
+            color: var(--color-text-brown);
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--color-text-brown);
+        }
+        
+        /* Custom heading class for the proposal */
+        .proposal-heading {
+            font-family: var(--font-display);
+            font-size: 3rem; /* text-5xl */
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.025em;
+        }
+        
+        @media (min-width: 768px) {
+            .proposal-heading {
+                font-size: 4.5rem; /* md:text-7xl */
+            }
+        }
+        
+        .proposal-subheading {
+            font-family: var(--font-display);
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700;
+        }
+        
+        /* --- "DM Chaos" Mockup Styles --- */
+        .dm-chaos-container {
+            max-width: 450px;
+            margin: 2rem auto;
+            background-color: #000;
+            border: 8px solid #111;
+            border-radius: 40px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .dm-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .dm-header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            margin-right: 0.75rem;
+            background-color: var(--color-bg-soft-yellow);
+        }
+        
+        .dm-header-text {
+            color: #fff;
+            font-weight: 600;
+        }
+        
+        .dm-chat-area {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .dm-bubble {
+            padding: 0.75rem 1rem;
+            border-radius: 20px;
+            max-width: 75%;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        
+        .dm-bubble.client {
+            background-color: #3797F0;
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .dm-bubble.customer {
+            background-color: #333;
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .dm-input-bar {
+            background-color: #222;
+            color: #888;
+            border-radius: 20px;
+            padding: 0.75rem 1rem;
+            margin-top: 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        /* --- Simulation Frame Styles --- */
+        .simulation-container {
+            border: 8px solid var(--color-text-brown);
+            border-radius: 1rem; /* rounded-2xl */
+            box-shadow: 0 20px 25px -5px rgba(139, 69, 19, 0.2), 0 10px 10px -5px rgba(139, 69, 19, 0.1);
+            overflow: hidden;
+            background-color: var(--color-sim-bg);
+        }
+        
+        .browser-bar {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background-color: #EFEBE9; /* A light tan/gray */
+            border-bottom: 1px solid var(--color-border-tan);
+        }
+        
+        .browser-dots { display: flex; gap: 0.5rem; }
+        .browser-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .browser-dot.red { background-color: #f87171; }
+        .browser-dot.yellow { background-color: #facc15; }
+        .browser-dot.green { background-color: #4ade80; }
+        
+        .browser-url {
+            flex-grow: 1;
+            background-color: #fff;
+            border: 1px solid var(--color-border-tan);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin: 0 1.5rem;
+            font-size: 0.875rem;
+            color: #333;
+            font-family: monospace;
+        }
+
+        #simulation-root {
+            height: 80vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            background-color: var(--color-sim-bg); /* FloralWhite */
+        }
+        
+        /* --- Core E-commerce Simulation Styles --- */
+        .sim-app {
+            font-family: var(--font-inter);
+            color: #333;
+            background-color: var(--color-sim-bg);
+            animation: simFadeIn 0.5s ease-out;
+        }
+        
+        @keyframes simFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-heading-xl { font-family: var(--font-display); font-size: 3rem; font-weight: 800; line-height: 1.1; color: var(--color-text-brown); }
+        .sim-heading-lg { font-family: var(--font-display); font-size: 2.25rem; font-weight: 700; color: var(--color-text-brown); }
+        .sim-heading-md { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; color: var(--color-text-brown); }
+
+        /* Simulation Navbar */
+        .sim-navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background-color: rgba(255, 250, 240, 0.9); /* FloralWhite with blur */
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--color-border-tan);
+        }
+        
+        .sim-logo {
+            font-family: var(--font-display);
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--color-text-brown);
+        }
+        
+        .sim-logo-green { color: #10B981; /* Emerald-500 */ }
+        
+        .sim-nav-link {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #444;
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .sim-nav-link:hover { color: var(--color-text-brown); }
+        
+        .sim-cart-button { position: relative; cursor: pointer; }
+        
+        .sim-cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: var(--color-text-brown);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        
+        .sim-cart-button:hover .sim-cart-count { transform: scale(1.1); }
+
+        /* Simulation Buttons */
+        .sim-btn {
+            font-family: var(--font-inter);
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        
+        .sim-btn-primary {
+            background-color: var(--color-text-brown);
+            color: var(--color-sim-bg);
+            border-color: var(--color-text-brown);
+        }
+        
+        .sim-btn-primary:hover {
+            background-color: #A0522D; /* Sienna */
+            border-color: #A0522D;
+        }
+        
+        .sim-btn-secondary {
+            background-color: var(--color-bg-soft-green);
+            color: var(--color-text-brown);
+            border-color: #A7F3D0; /* emerald-200 */
+        }
+        
+        .sim-btn-secondary:hover {
+            background-color: #A7F3D0; /* emerald-200 */
+        }
+        
+        .sim-btn-outline {
+            background-color: transparent;
+            color: var(--color-text-brown);
+            border-color: var(--color-border-tan);
+        }
+        
+        .sim-btn-outline:hover {
+            background-color: rgba(210, 180, 140, 0.1); /* Light tan bg */
+        }
+
+        /* Simulation Product Grid & Cards */
+        .sim-product-card {
+            cursor: pointer;
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow: hidden;
+            background-color: #fff;
+            border: 2px solid var(--color-border-tan);
+            transition: all 0.3s ease;
+        }
+        
+        .sim-product-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(139, 69, 19, 0.1), 0 4px 6px -2px rgba(139, 69, 19, 0.07);
+            transform: translateY(-4px);
+            border-color: var(--color-text-brown);
+        }
+        
+        .sim-product-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            background-color: var(--color-sim-bg);
+        }
+        
+        .sim-product-info { padding: 1rem; background-color: #fff; }
+        .sim-product-name { font-size: 1.1rem; font-weight: 600; color: var(--color-text-brown); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sim-product-price { font-size: 1rem; font-weight: 500; color: #555; }
+        
+        /* Simulation Product Detail Page */
+        .sim-detail-image {
+            width: 100%;
+            max-height: 600px;
+            object-fit: cover;
+            border-radius: 1rem; /* rounded-2xl */
+            border: 2px solid var(--color-border-tan);
+        }
+        
+        .sim-quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--color-border-tan);
+            border-radius: 0.5rem; /* rounded-lg */
+            overflow: hidden;
+        }
+        
+        .sim-quantity-btn {
+            background-color: #fff;
+            border: none;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 1.25rem;
+            line-height: 1;
+            color: var(--color-text-brown);
+        }
+        
+        .sim-quantity-btn:hover { background-color: var(--color-bg-soft-yellow); }
+        
+        .sim-quantity-input {
+            width: 50px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            padding: 0.5rem;
+            color: #333;
+            -moz-appearance: textfield;
+            background-color: #fff;
+        }
+        
+        .sim-quantity-input::-webkit-outer-spin-button,
+        .sim-quantity-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        /* Simulation Cart Page */
+        .sim-cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid var(--color-border-tan);
+        }
+        
+        .sim-cart-item-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem; /* rounded-lg */
+            border: 1px solid var(--color-border-tan);
+        }
+        
+        .sim-cart-summary {
+            background-color: #fff;
+            border: 2px solid var(--color-border-tan);
+            border-radius: 1rem; /* rounded-2xl */
+            padding: 1.5rem;
+        }
+        
+        /* Simulation Custom Order Form */
+        .sim-form-step { display: none; }
+        .sim-form-step.active { display: block; animation: simFadeIn 0.3s ease-out; }
+        
+        .sim-form-label {
+            display: block;
+            text-sm-font-medium;
+            color: var(--color-text-brown);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+        
+        .sim-form-input, .sim-form-select, .sim-form-textarea {
+            width: 100%;
+            border: 1px solid var(--color-border-tan);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-inter);
+            color: #333;
+        }
+        
+        .sim-form-input:focus, .sim-form-select:focus, .sim-form-textarea:focus {
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            border-color: var(--color-text-brown);
+            box-shadow: 0 0 0 2px var(--color-bg-soft-yellow);
+        }
+        
+        .sim-form-option {
+            border: 2px solid var(--color-border-tan);
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        
+        .sim-form-option:hover {
+            border-color: #A0522D; /* Sienna */
+            background-color: #fff;
+        }
+        
+        .sim-form-option.selected {
+            border-color: var(--color-text-brown);
+            background-color: var(--color-bg-soft-yellow);
+            box-shadow: 0 0 10px rgba(139, 69, 19, 0.1);
+        }
+        
+        .sim-form-option-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        
+        .sim-file-upload {
+            border: 2px dashed var(--color-border-tan);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            text-align: center;
+            background-color: #fff;
+            color: #777;
+        }
+
+        /* Simulation Footer */
+        .sim-footer {
+            background-color: #fff;
+            border-top: 2px solid var(--color-border-tan);
+            color: #555;
+            font-size: 0.875rem;
+            padding: 3rem 1.5rem;
+            margin-top: 4rem;
+        }
+
+        /* --- Proposal Pricing Table --- */
+        .pricing-card {
+            border: 1px solid var(--color-border-tan);
+            border-radius: 1rem; /* rounded-2xl */
+            padding: 2.5rem;
+            background-color: var(--color-sim-bg);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pricing-card-highlight {
+            border: 2px solid var(--color-text-brown);
+            background-color: #fff;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgba(139, 69, 19, 0.1), 0 10px 10px -5px rgba(139, 69, 19, 0.04);
+        }
+        
+        .highlight-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-text-brown);
+            color: #fff;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px; /* rounded-full */
+            font-family: var(--font-inter);
+        }
+
+        .pricing-feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            flex-grow: 1;
+        }
+        
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: #444;
+        }
+        
+        .pricing-feature svg {
+            width: 20px;
+            height: 20px;
+            color: var(--color-text-brown);
+            flex-shrink: 0;
+        }
+        
+        /* --- Proposal Final CTA Button --- */
+        .cta-button {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 1.25rem 3rem;
+            background-color: var(--color-text-brown);
+            color: #fff;
+            border-radius: 0.5rem; /* rounded-lg */
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            background-color: #A0522D; /* Sienna */
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(139, 69, 19, 0.1), 0 4px 6px -2px rgba(139, 69, 19, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-beige text-brown">
+
+    <!-- 
+      SECTION 1: THE HERO
+    -->
+    <section class="py-24 md:py-32 bg-beige">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h1 class="proposal-heading mb-6">
+                Hi, the.yarn.sisters_
+            </h1>
+            <p class="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto" style="color: #6D4C41;">
+                We know you're busy with orders. Here is the full, <strong class="font-semibold text-brown">interactive proposal</strong> you can review on your time.
+            </p>
+        </div>
+    </section>
+
+    <!-- 
+      SECTION 2: THE "DM BOTTLENECK" (THE PROBLEM)
+    -->
+    <section class="py-24 md:py-32" style="background-color: #FDFBF5; border-top: 1px solid var(--color-border-tan); border-bottom: 1px solid var(--color-border-tan);">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="proposal-subheading mb-4">The "DM to Order" Bottleneck</h2>
+                <p class="text-lg mb-12" style="color: #6D4C41;">
+                    Your crochet work is stunning, but your DMs are probably overflowing. Managing custom requests, colors, sizes, and payments in a chat is a recipe for burnout and lost sales.
+                    This might look familiar.
+                p>
+            </div>
+            
+            <!-- DM Chaos Mockup -->
+            <div class="dm-chaos-container">
+                <div class="dm-header">
+                    <img src="https://placehold.co/100x100/FEF3C7/8B4513?text=YS&font=poppins" alt="The Yarn Sisters Profile Picture">
+                    <span class="dm-header-text">the.yarn.sisters_</span>
+                </div>
+                <div class="dm-chat-area">
+                    <div class="dm-bubble customer">Hi! How much for a custom sweater?</div>
+                    <div class="dm-bubble customer">Can you make the sunflower bag in blue?</div>
+                    <div class="dm-bubble client">Hi! A custom sweater starts at ₹2,500. Yes, the bag can be in blue!</div>
+                    <div class="dm-bubble customer">Okay, how do I send measurements?</div>
+                    <div class="dm-bubble customer">What's the price for the blue bag?</div>
+                    <div class="dm-bubble client">Please DM your measurements. The bag is ₹1,299. GPay to 9XXXX-XXXXX.</div>
+                    <div class="dm-bubble customer">Sent payment for the bag.</div>
+                    <div class="dm-bubble customer">Here are my measurements: ...</div>
+                    <div class="dm-bubble client">Got it, thanks! Which order was this for?</div>
+                </div>
+                <div class="dm-input-bar">
+                    Message...
+                </div>
+            </div>
+            
+            <div class="text-center max-w-3xl mx-auto mt-12">
+                <p class="text-lg" style="color: #6D4C41;">
+                    Every custom request is a long conversation. Every "how to pay?" is friction. We can build a system that organizes this for you, so you can spend less time managing and more time creating.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- 
+      SECTION 3: YOUR NEW "CROCHET STUDIO" (THE SOLUTION)
+    -->
+    <section class="py-24 md:py-32 bg-beige">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="proposal-subheading mb-4">Our Vision: Your New "Crochet Studio"</h2>
+                <p class="text-lg mb-12" style="color: #6D4C41;">
+                    We propose a warm, cozy, and professional "Crochet Studio" online. It's like your own personal, high-end Etsy, fully branded to you. It will handle standard orders automatically and organize your custom requests.
+                    <br><br>
+                    <strong class="text-brown">We built you an interactive simulation.</strong>
+                    <br>
+                    Try adding the Sunflower Bag to your cart, or, more importantly, try the "Request a Custom Order" tool.
+                </p>
+            </div>
+            
+            <!-- The Simulation Frame -->
+            <div id="simulation-container" class="simulation-container max-w-7xl mx-auto">
+                <!-- Browser Bar -->
+                <div class="browser-bar">
+                    <div class="browser-dots">
+                        <div class="browser-dot red"></div>
+                        <div class="browser-dot yellow"></div>
+                        <div class="browser-dot green"></div>
+                    </div>
+                    <div class="browser-url">
+                        https://theyarnsisters.store
+                    </div>
+                </div>
+                
+                <!-- Simulation App Root -->
+                <div id="simulation-root">
+                    <!-- Loading... -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 
+      SECTION 4: THE INVESTMENT (THE PRICING)
+    -->
+    <section class="py-24 md:py-32" style="background-color: #FDFBF5; border-top: 1px solid var(--color-border-tan);">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center max-w-3xl mx-auto">
+                <h2 class="proposal-subheading mb-4">The Investment</h2>
+                <p class="text-lg mb-16" style="color: #6D4C41;">
+                    We offer simple, one-time-fee packages to build your digital studio. No monthly fees, no commissions.
+                </p>
+            </div>
+            
+            <!-- Pricing Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            
+                <!-- Plan 1: Starter -->
+                <div class="pricing-card">
+                    <div>
+                        <h3 class="text-2xl font-bold font-display mb-2">Starter</h3>
+                        <p class="text-gray-600 mb-4" style="color: #6D4C41;">A beautiful "digital portfolio."</p>
+                        <div class="text-4xl font-extrabold font-display mb-6">
+                            ₹1,999
+                        </div>
+                    </div>
+                    <ul class="pricing-feature-list">
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            1-Page "Link-in-Bio" Site
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Showcase Top 5 Products
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            "Order on WhatsApp" Redirect
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Professionally Designed
+                        </li>
+                    </ul>
+                    <a href="#" class="mt-8 sim-btn sim-btn-outline w-full" onclick="event.preventDefault()">Select Starter</a>
+                </div>
+                
+                <!-- Plan 2: Pro E-commerce (HIGHLIGHTED) -->
+                <div class="pricing-card pricing-card-highlight">
+                    <div class="highlight-badge">Our Recommendation</div>
+                    <div>
+                        <h3 class="text-2xl font-bold font-display mb-2">Pro E-commerce</h3>
+                        <p class="mb-4" style="color: #6D4C41;">The "Crochet Studio" you just used.</p>
+                        <div class="text-4xl font-extrabold font-display mb-6">
+                            ₹9,999
+                        </div>
+                    </div>
+                    <ul class="pricing-feature-list">
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            <strong style="color: var(--color-text-brown);">Everything in the Simulation</strong>
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Full E-commerce Store (Unlimited Products)
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Shopping Cart & Online Payments
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Simple Admin Panel (Manage Orders)
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Custom Domain (e.g., theyarnsisters.store)
+                        </li>
+                    </ul>
+                    <a href="#" class="mt-8 sim-btn sim-btn-primary w-full" onclick="event.preventDefault()">Get Started with Pro</a>
+                </div>
+                
+                <!-- Plan 3: Growth Partner -->
+                <div class="pricing-card">
+                    <div>
+                        <h3 class="text-2xl font-bold font-display mb-2">Growth Partner</h3>
+                        <p class="text-gray-600 mb-4" style="color: #6D4C41;">The full solution, plus marketing.</p>
+                        <div class="text-4xl font-extrabold font-display mb-6">
+                            ₹19,999
+                        </div>
+                    </div>
+                    <ul class="pricing-feature-list">
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            <strong style="color: var(--color-text-brown);">Everything in Pro E-commerce</strong>
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            <strong style="color: var(--color-text-brown);">"Custom Order" Form Integration</strong>
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Form sends orders to your Admin Panel
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Social Media Integration
+                        </li>
+                        <li class="pricing-feature">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                            Monthly Strategy Call (1 Hour)
+                        </li>
+                    </ul>
+                    <a href="#" class="mt-8 sim-btn sim-btn-outline w-full" onclick="event.preventDefault()">Select Growth</a>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+    
+    <!-- 
+      SECTION 5: THE FINAL CTA
+    -->
+    <section class="py-24 md:py-32 bg-beige">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="proposal-subheading mb-4">If this vision aligns, let's talk.</h2>
+            <p class="text-lg md:text-xl max-w-2xl mx-auto mb-12" style="color: #6D4C41;">
+                The next step is a simple, 15-minute call to discuss this proposal, answer your questions, and set a launch date for your new studio.
+            </p>
+            <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" class="cta-button">
+                Book Your 15-Min Strategy Call
+            </a>
+        </div>
+    </section>
+
+    <!-- 
+      PROPOSAL FOOTER
+    -->
+    <footer class="py-12 bg-beige border-t border-border-tan">
+        <div class="max-w-7xl mx-auto px-6 text-center text-sm" style="color: #6D4C41;">
+            <p>&copy; 2025 [Your Agency Name]. A confidential proposal prepared for the.yarn.sisters_.</p>
+        </div>
+    </footer>
+    
+
+    <!-- 
+    ====================================================================
+    ||                                                                ||
+    ||          E-COMMERCE SIMULATION JAVASCRIPT                      ||
+    ||          (Rebuilt for the.yarn.sisters_)                       ||
+    ||                                                                ||
+    ====================================================================
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. MOCK DATABASE ---
+            
+            const db = {
+                products: [
+                    { id: 'p1', name: 'Sunflower Crochet Bag', price: 1299, image: 'https://placehold.co/600x600/FEF3C7/8B4513?text=Sunflower+Bag&font=poppins', description: 'Our signature, handmade sunflower granny square tote bag. Perfect for market days and adding a touch of sunshine. Durable cotton yarn.' },
+                    { id: 'p2', name: 'Chunky Knit Blanket', price: 4500, image: 'https://placehold.co/600x600/F5F5DC/8B4513?text=Chunky+Blanket&font=poppins', description: 'Incredibly soft and cozy, this chunky knit blanket is hand-knitted with merino wool. A perfect, warm addition to your living room or bedroom.' },
+                    { id: 'p3', name: 'Pastel Amigurumi Bee', price: 899, image: 'https://placehold.co/600x600/D1FAE5/8B4513?text=Crochet+Bee&font=poppins', description: 'A cute, cuddly, and soft amigurumi bee, handmade with pastel yellow and green yarn. A perfect gift for kids or to decorate your desk.' },
+                    { id: 'p4', name: 'Cozy Winter Scarf', price: 1800, image: 'https://placehold.co/600x600/D2B48C/8B4513?text=Winter+Scarf&font=poppins', description: 'A long, wide, and wonderfully warm winter scarf, crocheted in a classic ribbed pattern. Made with a soft acrylic-wool blend.' }
+                ],
+                customOrder: {
+                    categories: [
+                        { id: 'cat1', name: 'Clothing', icon: '👕' },
+                        { id: 'cat2', name: 'Amigurumi (Toy)', icon: '🧸' },
+                        { id: 'cat3', name: 'Bag / Accessory', icon: '👜' },
+                        { id: 'cat4', name: 'Blanket / Home', icon: '🏠' },
+                        { id: 'cat5', name: 'Other', icon: '❓' }
+                    ],
+                    budgets: [
+                        '₹1,000 - ₹2,500',
+                        '₹2,500 - ₹5,000',
+                        '₹5,000 - ₹10,000',
+                        '₹10,000+'
+                    ]
+                }
+            };
+            
+            // --- 2. APPLICATION STATE ---
+            
+            const simState = {
+                currentView: 'home',
+                currentProduct: null, // holds ID for product detail view
+                cart: [], // Array of { id, name, price, image, quantity }
+                customOrderForm: {
+                    step: 1,
+                    category: null,
+                    description: '',
+                    budget: '',
+                    contact: ''
+                }
+            };
+            
+            // --- 3. STATE MANAGEMENT / CART LOGIC ---
+            
+            const formatCurrency = (amount) => `₹${amount.toLocaleString('en-IN')}`;
+
+            const addToCart = (item) => {
+                const existingItem = simState.cart.find(i => i.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity += item.quantity;
+                } else {
+                    simState.cart.push(item);
+                }
+                showToast(`${item.name} added to cart!`);
+                renderSimulation();
+            };
+            
+            const updateCartQuantity = (id, quantity) => {
+                const item = simState.cart.find(i => i.id === id);
+                if (item) {
+                    if (quantity <= 0) {
+                        removeFromCart(id);
+                    } else {
+                        item.quantity = quantity;
+                        renderSimulation();
+                    }
+                }
+            };
+            
+            const removeFromCart = (id) => {
+                simState.cart = simState.cart.filter(i => i.id !== id);
+                renderSimulation();
+            };
+            
+            const getCartCount = () => {
+                return simState.cart.reduce((total, item) => total + item.quantity, 0);
+            };
+            
+            const getCartSubtotal = () => {
+                return simState.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            };
+
+            // --- 4. NAVIGATION ---
+            
+            const navigateTo = (view, data = null) => {
+                simState.currentView = view;
+                
+                if (view === 'productDetail') {
+                    simState.currentProduct = db.products.find(p => p.id === data.id);
+                }
+                if (view === 'customOrder') {
+                    // Reset custom order form on view
+                    simState.customOrderForm = { step: 1, category: null, description: '', budget: '', contact: '' };
+                }
+                
+                renderSimulation();
+                document.getElementById('simulation-root').scrollTop = 0;
+            };
+            
+            
+            // --- 5. HTML TEMPLATE GENERATORS ---
+            
+            const getSimNavbarHTML = () => {
+                return `
+                    <nav class="sim-navbar w-full">
+                        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div class="flex justify-between items-center h-20">
+                                <!-- Logo -->
+                                <div class="flex-shrink-0 flex items-center">
+                                    <a href="#" class="sim-logo sim-nav-link" data-view="home">
+                                        The<span class="sim-logo-green">.</span>Yarn<span class="sim-logo-green">.</span>Sisters
+                                    </a>
+                                </div>
+                                
+                                <!-- Links -->
+                                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                                    <a href="#" class="sim-nav-link" data-view="home">Shop Ready-Made</a>
+                                    <a href="#" class="sim-nav-link" data-view="customOrder">Custom Orders</a>
+                                    <a href="#" class="sim-nav-link" data-view="home">Our Story</a>
+                                </div>
+                                
+                                <!-- Cart -->
+                                <div class="flex items-center">
+                                    <button class="sim-cart-button p-2 rounded-full text-gray-700 hover:text-gray-900" data-view="cart">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+                                        </svg>
+                                        <span class="sim-cart-count">${getCartCount()}</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </nav>
+                `;
+            };
+            
+            const getSimFooterHTML = () => {
+                return `
+                    <footer class="sim-footer">
+                        <div class="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+                            <div>
+                                <h4 class="font-display text-lg font-semibold text-brown mb-4">Shop</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">Ready-Made</a></li>
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="customOrder">Custom Orders</a></li>
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">All Products</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-display text-lg font-semibold text-brown mb-4">About Us</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">Our Story</a></li>
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">Our Process</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-display text-lg font-semibold text-brown mb-4">Help</h4>
+                                <ul class="space-y-2">
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">FAQs</a></li>
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">Care Instructions</a></li>
+                                    <li><a href="#" class="hover:text-brown sim-nav-link" data-view="home">Contact</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-display text-lg font-semibold text-brown mb-4">The.Yarn.Sisters</h4>
+                                <p class="mb-4">Handmade with love. This is a simulation for proposal purposes.</p>
+                            </div>
+                        </div>
+                        <div class="text-center mt-12 pt-8 border-t border-border-tan">
+                            <p>&copy; 2025 theyarnsisters.store - All rights reserved.</p>
+                        </div>
+                    </footer>
+                `;
+            };
+
+            const getSimHomeHTML = () => {
+                let productGridHTML = db.products.map(product => `
+                    <div class="sim-product-card" data-product-id="${product.id}">
+                        <img src="${product.image}" alt="${product.name}" class="sim-product-image">
+                        <div class="sim-product-info">
+                            <h3 class="sim-product-name">${product.name}</h3>
+                            <p class="sim-product-price">${formatCurrency(product.price)}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                return `
+                    <div class="sim-app">
+                        <!-- Hero Section -->
+                        <div class="bg-sim-bg">
+                            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+                                <h1 class="sim-heading-xl mb-4">Made by Hand, With Heart</h1>
+                                <p class="text-lg text-gray-700 max-w-2xl mx-auto mb-8" style="color: #6D4C41;">
+                                    Discover cozy, custom crochet pieces, from bags to blankets.
+                                </p>
+                                <a href="#" class="sim-btn sim-btn-primary sim-nav-link" data-view="home">Shop Ready-Made</a>
+                            </div>
+                        </div>
+                        
+                        <!-- Featured Products -->
+                        <div class="bg-sim-bg">
+                            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                                <h2 class="sim-heading-lg text-center mb-12">Our Most-Loved Pieces</h2>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                                    ${productGridHTML}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Call to Action Section -->
+                        <div style="background-color: var(--color-bg-soft-yellow);">
+                            <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-24 grid md:grid-cols-2 gap-12 items-center">
+                                <div>
+                                    <h2 class="sim-heading-lg mb-4">Have an Idea?</h2>
+                                    <p class="text-lg mb-8" style="color: #6D4C41;">
+                                        We specialize in custom orders! From a specific character to a one-of-a-kind sweater, we can bring your vision to life.
+                                    </p>
+                                    <a href="#" class="sim-btn sim-btn-secondary sim-nav-link" data-view="customOrder">Request a Custom Order</a>
+                                </div>
+                                <div>
+                                    <img src="https://placehold.co/600x400/FEF3C7/8B4513?text=Your+Custom+Idea&font=poppins"
+                                         alt="Custom Crochet Example" class="rounded-xl shadow-lg w-full"
+                                         style="border: 2px solid var(--color-border-tan);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+            
+            const getSimProductDetailHTML = () => {
+                const product = simState.currentProduct;
+                if (!product) return `<p>Product not found.</p>`;
+                
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+                            <div class="grid md:grid-cols-2 gap-12 items-start">
+                                <!-- Image -->
+                                <div>
+                                    <img src="${product.image}" alt="${product.name}" class="sim-detail-image w-full">
+                                </div>
+                                
+                                <!-- Info -->
+                                <div class="pt-4">
+                                    <h1 class="sim-heading-lg mb-4">${product.name}</h1>
+                                    <p class="text-3xl font-display text-gray-800 mb-6" style="color: #444;">${formatCurrency(product.price)}</p>
+                                    <p class="text-gray-600 text-base leading-relaxed mb-8" style="color: #6D4C41;">${product.description}</p>
+                                    
+                                    <div class="flex items-center gap-4 mb-8">
+                                        <label for="quantity" class="font-semibold" style="color: var(--color-text-brown);">Quantity:</label>
+                                        <div class="sim-quantity-selector">
+                                            <button class="sim-quantity-btn" data-action="decrease-qty">-</button>
+                                            <input type="number" id="sim-quantity-input" class="sim-quantity-input" value="1" min="1">
+                                            <button class="sim-quantity-btn" data-action="increase-qty">+</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <button class="sim-btn sim-btn-primary w-full md:w-auto" id="sim-add-to-cart-btn" data-product-id="${product.id}">
+                                        Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+            
+            const getSimCartHTML = () => {
+                if (simState.cart.length === 0) {
+                    return `
+                        <div class="sim-app">
+                            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" class="w-24 h-24 mx-auto text-gray-300 mb-6" style="color: var(--color-border-tan);">
+                                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007Z" />
+                                </svg>
+                                <h1 class="sim-heading-lg mb-4">Your Cart is Empty</h1>
+                                <p class="mb-8" style="color: #6D4C41;">Looks like you haven't added any cozy items yet.</p>
+                                <a href="#" class="sim-btn sim-btn-primary sim-nav-link" data-view="home">Continue Shopping</a>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const subtotal = getCartSubtotal();
+                const cartItemsHTML = simState.cart.map(item => `
+                    <div class="sim-cart-item">
+                        <img src="${item.image}" alt="${item.name}" class="sim-cart-item-img">
+                        <div class="flex-grow">
+                            <h3 class="text-lg font-semibold text-brown mb-1">${item.name}</h3>
+                            <p class="text-sm mb-2" style="color: #555;">${formatCurrency(item.price)}</p>
+                            <div class="sim-quantity-selector w-32">
+                                <button class="sim-quantity-btn" data-action="decrease-cart-qty" data-id="${item.id}">-</button>
+                                <input type="number" class="sim-quantity-input" value="${item.quantity}" min="1" data-action="update-cart-qty-input" data-id="${item.id}">
+                                <button class="sim-quantity-btn" data-action="increase-cart-qty" data-id="${item.id}">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-lg font-semibold text-brown mb-2">${formatCurrency(item.price * item.quantity)}</p>
+                            <button class="text-sm text-red-600 hover:text-red-800" data-action="remove-from-cart" data-id="${item.id}">Remove</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                            <h1 class="sim-heading-lg text-center mb-12">Your Shopping Cart</h1>
+                            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                                <!-- Cart Items -->
+                                <div class="lg:col-span-2">
+                                    ${cartItemsHTML}
+                                </div>
+                                
+                                <!-- Cart Summary -->
+                                <div class="sim-cart-summary lg:sticky top-24">
+                                    <h2 class="text-2xl font-display font-bold text-brown mb-6">Order Summary</h2>
+                                    <div class="space-y-4">
+                                        <div class="flex justify-between">
+                                            <span style="color: #6D4C41;">Subtotal</span>
+                                            <span class="font-semibold text-brown">${formatCurrency(subtotal)}</span>
+                                        </div>
+                                        <div class="flex justify-between">
+                                            <span style="color: #6D4C41;">Delivery</span>
+                                            <span class="font-semibold text-brown">Calculated at checkout</span>
+                                        </div>
+                                        <div class="flex justify-between text-lg font-bold text-brown pt-4 border-t" style="border-color: var(--color-border-tan);">
+                                            <span>Total</span>
+                                            <span>${formatCurrency(subtotal)}</span>
+                                        </div>
+                                    </div>
+                                    <button class="sim-btn sim-btn-primary w-full mt-8" data-view="checkout">
+                                        Proceed to Checkout
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const getSimCheckoutHTML = () => {
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                            <h1 class="sim-heading-lg text-center mb-12">Checkout</h1>
+                            
+                            <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 p-6 rounded-xl mb-12 max-w-3xl mx-auto" style="background-color: var(--color-bg-soft-yellow); border-color: var(--color-border-tan); color: var(--color-text-brown);">
+                                <h3 class="font-display font-bold text-xl mb-2">This is a Simulation</h3>
+                                <p>This checkout is for demonstration purposes only. No real data is collected or processed. In the final version, this would be a secure payment gateway.</p>
+                            </div>
+                            
+                            <div class="grid lg:grid-cols-3 gap-12 items-start">
+                                <!-- Form -->
+                                <div class="lg:col-span-2 space-y-6">
+                                    <div>
+                                        <h2 class="text-2xl font-display font-bold text-brown mb-6">Shipping Information</h2>
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                            <div>
+                                                <label class="sim-form-label">First Name</label>
+                                                <input type="text" class="sim-form-input" placeholder="First Name">
+                                            </div>
+                                            <div>
+                                                <label class="sim-form-label">Last Name</label>
+                                                <input type="text" class="sim-form-input" placeholder="Last Name">
+                                            </div>
+                                            <div class="sm:col-span-2">
+                                                <label class="sim-form-label">Address</label>
+                                                <input type="text" class="sim-form-input" placeholder="123 Cozy St">
+                                            </div>
+                                            <div>
+                                                <label class="sim-form-label">City</label>
+                                                <input type="text" class="sim-form-input" placeholder="Mumbai">
+                                            </div>
+                                            <div>
+                                                <label class="sim-form-label">Pincode</label>
+                                                <input type="text" class="sim-form-input" placeholder="400001">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-display font-bold text-brown mb-6">Payment</h2>
+                                        <p style="color: #6D4C41;">Simulated payment options (UPI, Card) would appear here.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Summary -->
+                                <div class="sim-cart-summary lg:sticky top-24">
+                                    <h2 class="text-2xl font-display font-bold text-brown mb-6">Order Summary</h2>
+                                    ${simState.cart.map(item => `
+                                        <div class="flex justify-between items-center py-2 border-b" style="border-color: var(--color-border-tan);">
+                                            <div class="flex items-center gap-3">
+                                                <img src="${item.image}" class="w-12 h-12 rounded-md object-cover">
+                                                <div>
+                                                    <p class="font-semibold text-sm text-brown">${item.name} <span class="text-gray-500">x ${item.quantity}</span></p>
+                                                    <p class="text-sm text-gray-500">${formatCurrency(item.price)}</p>
+                                                </div>
+                                            </div>
+                                            <p class="font-semibold text-sm text-brown">${formatCurrency(item.price * item.quantity)}</p>
+                                        </div>
+                                    `).join('')}
+                                    <div class="space-y-4 mt-6">
+                                        <div class="flex justify-between text-lg font-bold text-brown pt-4 border-t" style="border-color: var(--color-border-tan);">
+                                            <span>Total</span>
+                                            <span>${formatCurrency(getCartSubtotal())}</span>
+                                        </div>
+                                    </div>
+                                    <button class="sim-btn sim-btn-primary w-full mt-8" data-action="place-order">
+                                        Place Order (Simulate)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+            
+            const getSimCustomOrderHTML = () => {
+                const step = simState.customOrderForm.step;
+                
+                // Step 1: Category
+                const categoriesHTML = db.customOrder.categories.map(cat => `
+                    <div class="sim-form-option ${simState.customOrderForm.category?.id === cat.id ? 'selected' : ''}" data-custom-cat-id="${cat.id}">
+                        <div class="sim-form-option-icon">${cat.icon}</div>
+                        <span class="text-lg font-semibold text-brown">${cat.name}</span>
+                    </div>
+                `).join('');
+
+                // Step 2: Details
+                const budgetsHTML = db.customOrder.budgets.map(budget => `
+                    <option value="${budget}" ${simState.customOrderForm.budget === budget ? 'selected' : ''}>${budget}</option>
+                `).join('');
+
+                // Step 3: Review
+                const reviewHTML = `
+                    <div class="sim-cart-summary !bg-white space-y-4">
+                        <div>
+                            <p class="text-sm font-semibold uppercase text-gray-500">Category</p>
+                            <p class="text-lg text-brown">${simState.customOrderForm.category?.name || 'Not selected'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase text-gray-500">Description</p>
+                            <p class="text-lg text-brown">${simState.customOrderForm.description || 'Not provided'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase text-gray-500">Budget</p>
+                            <p class="text-lg text-brown">${simState.customOrderForm.budget || 'Not selected'}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold uppercase text-gray-500">Contact</p>
+                            <p class="text-lg text-brown">${simState.customOrderForm.contact || 'Not provided'}</p>
+                        </div>
+                    </div>
+                `;
+
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                            <h1 class="sim-heading-lg text-center mb-12">Request a Custom Order</h1>
+                            
+                            <!-- Progress Bar -->
+                            <div class="max-w-xl mx-auto my-12">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex-1 text-center">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto ${step >= 1 ? 'bg-brown text-white' : 'bg-gray-200 text-gray-600'}" style="${step >= 1 ? 'background-color: var(--color-text-brown); color: white;' : ''}">1</div>
+                                        <p class="text-sm font-medium mt-2 ${step >= 1 ? 'text-brown' : 'text-gray-500'}">Category</p>
+                                    </div>
+                                    <div class="flex-1 h-1 ${step >= 2 ? 'bg-brown' : 'bg-gray-200'}" style="${step >= 2 ? 'background-color: var(--color-text-brown);' : ''}"></div>
+                                    <div class="flex-1 text-center">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto ${step >= 2 ? 'bg-brown text-white' : 'bg-gray-200 text-gray-600'}" style="${step >= 2 ? 'background-color: var(--color-text-brown); color: white;' : ''}">2</div>
+                                        <p class="text-sm font-medium mt-2 ${step >= 2 ? 'text-brown' : 'text-gray-500'}">Details</p>
+                                    </div>
+                                    <div class="flex-1 h-1 ${step >= 3 ? 'bg-brown' : 'bg-gray-200'}" style="${step >= 3 ? 'background-color: var(--color-text-brown);' : ''}"></div>
+                                    <div class="flex-1 text-center">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center mx-auto ${step >= 3 ? 'bg-brown text-white' : 'bg-gray-200 text-gray-600'}" style="${step >= 3 ? 'background-color: var(--color-text-brown); color: white;' : ''}">3</div>
+                                        <p class="text-sm font-medium mt-2 ${step >= 3 ? 'text-brown' : 'text-gray-500'}">Review</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Step Content -->
+                            <div class="max-w-2xl mx-auto">
+                                <!-- Step 1: Category -->
+                                <div id="form-step-1" class="sim-form-step ${step === 1 ? 'active' : ''}">
+                                    <h2 class="sim-heading-md text-center mb-8">What are you dreaming of?</h2>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                        ${categoriesHTML}
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 2: Details -->
+                                <div id="form-step-2" class="sim-form-step ${step === 2 ? 'active' : ''}">
+                                    <h2 class="sim-heading-md text-center mb-8">Tell us about your idea</h2>
+                                    <div class="space-y-6">
+                                        <div>
+                                            <label class="sim-form-label" for="form-description">Describe your idea</label>
+                                            <textarea id="form-description" class="sim-form-textarea" rows="5" placeholder="e.g., A chunky sweater in baby blue, oversized fit. Or, a small amigurumi of my cat.">${simState.customOrderForm.description}</textarea>
+                                        </div>
+                                        <div>
+                                            <label class="sim-form-label">Reference Images (Mock)</label>
+                                            <div class="sim-file-upload">
+                                                Click to upload (simulation)
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="sim-form-label" for="form-budget">Your Budget</label>
+                                            <select id="form-budget" class="sim-form-select">
+                                                <option value="">Select a budget range</option>
+                                                ${budgetsHTML}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="sim-form-label" for="form-contact">Your Contact (Email or @Instagram)</label>
+                                            <input type="text" id="form-contact" class="sim-form-input" placeholder="so we can get back to you" value="${simState.customOrderForm.contact}">
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Step 3: Review -->
+                                <div id="form-step-3" class="sim-form-step ${step === 3 ? 'active' : ''}">
+                                    <h2 class="sim-heading-md text-center mb-8">Review Your Request</h2>
+                                    ${reviewHTML}
+                                </div>
+                            </div>
+                            
+                            <!-- Navigation -->
+                            <div class="max-w-2xl mx-auto mt-12 pt-6 border-t border-border-tan flex justify-between items-center">
+                                <div>
+                                    ${step > 1 ? `<button class="sim-btn sim-btn-outline" data-action="custom-prev">Back</button>` : ''}
+                                </div>
+                                <div>
+                                    ${step < 3 ? `<button class="sim-btn sim-btn-primary" data-action="custom-next">Next</button>` : ''}
+                                    ${step === 3 ? `<button class="sim-btn sim-btn-primary" data-action="custom-submit">Submit Request</button>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            const getOrderSuccessHTML = () => {
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-24 h-24 mx-auto text-green-500 mb-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                            </svg>
+                            <h1 class="sim-heading-lg mb-4">Thank You! (Simulation)</h1>
+                            <p class="text-lg mb-8" style="color: #6D4C41;">Your simulated order has been placed. In a real store, you would receive a confirmation email shortly.</p>
+                            <a href="#" class="sim-btn sim-btn-primary sim-nav-link" data-view="home">Continue Shopping</a>
+                        </div>
+                    </div>
+                `;
+            };
+            
+            const getCustomOrderSuccessHTML = () => {
+                return `
+                    <div class="sim-app">
+                        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-24 h-24 mx-auto text-green-500 mb-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                            </svg>
+                            <h1 class="sim-heading-lg mb-4">Request Sent!</h1>
+                            <p class="text-lg mb-8" style="color: #6D4C41;">
+                                We've received your custom order request (simulation). In a real store, we would contact you at <strong>${simState.customOrderForm.contact || 'your contact'}</strong> within 24 hours to confirm details and pricing.
+                            </p>
+                            <a href="#" class="sim-btn sim-btn-primary sim-nav-link" data-view="home">Back to Shop</a>
+                        </div>
+                    </div>
+                `;
+            };
+            
+            // --- 6. TOAST NOTIFICATION ---
+            
+            const showToast = (message) => {
+                let toast = document.createElement('div');
+                toast.className = 'fixed top-24 right-4 z-[100] px-6 py-3 rounded-lg shadow-lg';
+                toast.style.backgroundColor = 'var(--color-text-brown)';
+                toast.style.color = 'white';
+                toast.style.fontFamily = 'var(--font-inter)';
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.style.transition = 'opacity 0.5s ease';
+                    toast.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(toast);
+                    }, 500);
+                }, 2500);
+            };
+
+            // --- 7. EVENT LISTENER ATTACHMENT ---
+            
+            const attachSimEventListeners = () => {
+                const root = document.getElementById('simulation-root');
+                if (!root) return;
+                
+                // --- Global Nav ---
+                root.querySelectorAll('.sim-nav-link').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const view = e.currentTarget.dataset.view;
+                        if (view) navigateTo(view);
+                    });
+                });
+                
+                root.querySelectorAll('.sim-cart-button').forEach(el => {
+                    el.addEventListener('click', (e) => { e.preventDefault(); navigateTo('cart'); });
+                });
+                
+                // --- Home Page ---
+                root.querySelectorAll('.sim-product-card').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.productId;
+                        navigateTo('productDetail', { id });
+                    });
+                });
+                
+                // --- Product Detail Page ---
+                root.querySelector('#sim-add-to-cart-btn')?.addEventListener('click', (e) => {
+                    const id = e.currentTarget.dataset.productId;
+                    const product = db.products.find(p => p.id === id);
+                    const quantity = parseInt(root.querySelector('#sim-quantity-input').value, 10);
+                    if (product && quantity > 0) {
+                        addToCart({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: quantity });
+                    }
+                });
+                
+                root.querySelector('.sim-quantity-btn[data-action="increase-qty"]')?.addEventListener('click', () => {
+                    const input = root.querySelector('#sim-quantity-input');
+                    input.value = parseInt(input.value, 10) + 1;
+                });
+                
+                root.querySelector('.sim-quantity-btn[data-action="decrease-qty"]')?.addEventListener('click', () => {
+                    const input = root.querySelector('#sim-quantity-input');
+                    const newVal = parseInt(input.value, 10) - 1;
+                    if (newVal >= 1) input.value = newVal;
+                });
+                
+                // --- Cart Page ---
+                root.querySelectorAll('[data-action="decrease-cart-qty"]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        const item = simState.cart.find(i => i.id === id);
+                        if (item) updateCartQuantity(id, item.quantity - 1);
+                    });
+                });
+                
+                root.querySelectorAll('[data-action="increase-cart-qty"]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        const item = simState.cart.find(i => i.id === id);
+                        if (item) updateCartQuantity(id, item.quantity + 1);
+                    });
+                });
+                
+                root.querySelectorAll('[data-action="update-cart-qty-input"]').forEach(el => {
+                    el.addEventListener('change', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        const newQuantity = parseInt(e.currentTarget.value, 10);
+                        if (newQuantity) updateCartQuantity(id, newQuantity);
+                    });
+                });
+                
+                root.querySelectorAll('[data-action="remove-from-cart"]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        removeFromCart(id);
+                    });
+                });
+                
+                root.querySelector('.sim-btn[data-view="checkout"]')?.addEventListener('click', () => {
+                    navigateTo('checkout');
+                });
+                
+                // --- Checkout Page ---
+                root.querySelector('[data-action="place-order"]')?.addEventListener('click', () => {
+                    simState.cart = []; // Empty the cart
+                    navigateTo('orderSuccess');
+                });
+                
+                // --- Custom Order Form ---
+                root.querySelectorAll('[data-custom-cat-id]').forEach(el => {
+                    el.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.customCatId;
+                        simState.customOrderForm.category = db.customOrder.categories.find(c => c.id === id);
+                        renderSimulation();
+                    });
+                });
+
+                root.querySelector('#form-description')?.addEventListener('input', (e) => {
+                    simState.customOrderForm.description = e.target.value;
+                });
+                root.querySelector('#form-budget')?.addEventListener('change', (e) => {
+                    simState.customOrderForm.budget = e.target.value;
+                });
+                root.querySelector('#form-contact')?.addEventListener('input', (e) => {
+                    simState.customOrderForm.contact = e.target.value;
+                });
+
+                root.querySelector('[data-action="custom-next"]')?.addEventListener('click', () => {
+                    const form = simState.customOrderForm;
+                    if (form.step === 1 && !form.category) {
+                        showToast('Please select a category.');
+                        return;
+                    }
+                    if (form.step === 2 && (!form.description || !form.budget || !form.contact)) {
+                        showToast('Please fill out all the details.');
+                        return;
+                    }
+                    if (form.step < 3) {
+                        form.step++;
+                        renderSimulation();
+                    }
+                });
+                
+                root.querySelector('[data-action="custom-prev"]')?.addEventListener('click', () => {
+                    if (simState.customOrderForm.step > 1) {
+                        simState.customOrderForm.step--;
+                        renderSimulation();
+                    }
+                });
+                
+                root.querySelector('[data-action="custom-submit"]')?.addEventListener('click', () => {
+                    navigateTo('customOrderSuccess');
+                });
+            };
+
+            // --- 8. MAIN RENDER FUNCTION ---
+            
+            const renderSimulation = () => {
+                const root = document.getElementById('simulation-root');
+                if (!root) { console.error('Simulation root not found!'); return; }
+                
+                let contentHTML = '';
+                
+                switch(simState.currentView) {
+                    case 'home':
+                        contentHTML = getSimHomeHTML();
+                        break;
+                    case 'productDetail':
+                        contentHTML = getSimProductDetailHTML();
+                        break;
+                    case 'cart':
+                        contentHTML = getSimCartHTML();
+                        break;
+                    case 'checkout':
+                        contentHTML = getSimCheckoutHTML();
+                        break;
+                    case 'orderSuccess':
+                        contentHTML = getOrderSuccessHTML();
+                        break;
+                    case 'customOrder':
+                        contentHTML = getSimCustomOrderHTML();
+                        break;
+                    case 'customOrderSuccess':
+                        contentHTML = getCustomOrderSuccessHTML();
+                        break;
+                    default:
+                        contentHTML = getSimHomeHTML();
+                }
+                
+                const navbarHTML = getSimNavbarHTML();
+                const footerHTML = getSimFooterHTML();
+                
+                root.innerHTML = navbarHTML + contentHTML + footerHTML;
+                
+                attachSimEventListeners();
+            };
+            
+            // --- 9. INITIALIZE ---
+            
+            console.log('Initializing The Yarn Sisters Simulation...');
+            renderSimulation(); // Initial render on page load
+            
+        });
+    </script>
+
+</body>
+</html>
